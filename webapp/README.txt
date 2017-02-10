@@ -6,3 +6,5 @@ Unzip OpenUI5 runtime in webapp folder (will create resources folder) then delet
 To start localhost in cmd running mockServer.html:
 
 browser-sync start --server --index test/mockServer.html --files "**/*"
+
+browser-sync start --server --index test/unit/unitTests.qunit.html --files "**/*"
