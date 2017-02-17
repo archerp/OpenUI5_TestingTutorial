@@ -2,12 +2,11 @@ sap.ui.require([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/AggregationLengthEquals',
 		'sap/ui/test/matchers/PropertyStrictEquals',
-		'sap/ui/demo/bulletinboard/test/integration/pages/Common'
+		'sap/ui/test/matchers/BindingPath',
+		'sap/ui/demo/bulletinboard/test/integration/pages/Common',
+		'sap/ui/test/actions/Press'
 	],
-	function (Opa5,
-			  AggregationLengthEquals,
-			  PropertyStrictEquals,
-			  Common) {
+	function (Opa5, AggregationLengthEquals, PropertyStrictEquals, BindingPath, Common, Press) {
 		"use strict";
 
 		var sViewName = "Worklist",
@@ -16,7 +15,27 @@ sap.ui.require([
 		Opa5.createPageObjects({
 			onTheWorklistPage: {
 				baseClass: Common,
-				actions: {},
+				actions: {
+					iPressOnMoreData: function () {
+						return this.waitFor({
+							id: sTableId,
+							viewName: sViewName,
+							actions: new Press(),
+							errorMessage: "The Table does not have a trigger"
+						});
+					},
+					iPressOnTheItemWithTheID: function (sId) {
+						return this.waitFor({
+							controlType: "sap.m.ColumnListItem",
+							viewName: sViewName,
+							matchers:  new BindingPath({
+								path: "/Posts('" + sId + "')"
+							}),
+							actions: new Press(),
+							errorMessage: "No list item with the id " + sId + " was found."
+						});
+					}					
+				},
 				assertions: {
 					theTableShouldHaveAllEntries: function () {
 						return this.waitFor({
@@ -49,7 +68,18 @@ sap.ui.require([
 							},
 							errorMessage: "The Table's header does not container the number of items: 23"
 						});
-					}
+					},
+
+					iShouldSeeTheTable: function () {
+						return this.waitFor({
+							id: sTableId,
+							viewName: sViewName,
+							success: function () {
+								Opa5.assert.ok(true, "The table is visible");
+							},
+							errorMessage: "Was not able to see the table."
+						});
+					}					
 
 				}
 			}
